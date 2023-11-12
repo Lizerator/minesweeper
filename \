@@ -1,0 +1,58 @@
+NEARBY_DIRECTIONS={{-1,-1},{-1,0},{-1,1},{0,-1},{0,1},{1,-1},{1,0},{1,1}}
+grid={}
+known_grid={}
+selector={1,1}
+TESTWIDTH=16
+
+function _init()
+  print("hello world")
+  grid=generate_full_grid(40,TESTWIDTH,TESTWIDTH)
+  known_grid=generate_full_grid(0,TESTWIDTH,TESTWIDTH)
+end
+
+
+function _draw()
+  cls()
+  for x=1,TESTWIDTH do 
+    for y=1,TESTWIDTH do
+      draw_down_cell((x-1)*7,(y-1)*7,known_grid[y][x])    
+    end
+  end
+  selx=(selector[1]-1)*7
+  sely=(selector[2]-1)*7
+  rect(selx,sely,selx+6,sely+8,1)
+end
+
+function _update()
+  temp=add_points(get_selector_movement(),selector)
+  if validate_point(add_points(temp,{-1,-1}), TESTWIDTH, TESTWIDTH) then
+    selector=temp
+  end
+  if(btnp(5)) then
+    known_grid=reveal_cell(selector[1],selector[2],known_grid,grid)
+  end
+end
+
+function get_selector_movement()
+  fin = {0,0}
+  if btnp(0) then
+    fin=add_points(fin,{-1,0})
+  end
+  if btnp(1) then
+    fin=add_points(fin,{1,0})
+  end
+  if(btnp(2)) then
+    fin=add_points(fin,{0,-1})
+  end
+  if(btnp(3)) then
+    fin=add_points(fin,{0,1})
+  end
+  return fin
+end
+
+function reveal_cell(x,y,known_grid,unknown_grid)
+   temp=known_grid
+   temp[y][x]=unknown_grid[y][x]
+   return temp
+end
+
